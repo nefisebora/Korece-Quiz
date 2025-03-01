@@ -44,7 +44,7 @@
       margin-bottom: 20px;
     }
     .header h1 {
-      font-size: 24px;
+      font-size: 32px;
       margin: 0;
     }
     .container {
@@ -58,7 +58,7 @@
     .mode-selection {
       display: flex;
       justify-content: center;
-      gap: 20px;
+      gap: 40px;
       margin-top: 20px;
       margin-bottom: 40px;
     }
@@ -66,7 +66,7 @@
       padding: 10px 20px;
       border: 3px solid #140f0f;
       border-radius: 5px;
-      font-size: 12px;
+      font-size: 14px;
       cursor: pointer;
       background: #ffd4dc;
       color: #ff320d;
@@ -82,7 +82,7 @@
       top: 100%;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 16px;
+      font-size: 24px;
       color: #ff320d;
       font-family: 'Press Start 2P', cursive;
       margin-top: 5px;
@@ -124,7 +124,7 @@
       border-radius: 5px;
       cursor: pointer;
       box-shadow: 3px 3px 0px #140f0f;
-      font-size: 12px;
+      font-size: 14px;
     }
     .option-btn:hover {
       background: #ffc0cb;
@@ -144,7 +144,7 @@
       border: 3px solid #140f0f;
       border-radius: 5px;
       cursor: pointer;
-      font-size: 12px;
+      font-size: 14px;
       color: #ff320d;
       text-shadow: 1px 1px 2px #140f0f;
       box-shadow: 3px 3px 0px #140f0f;
@@ -161,7 +161,7 @@
       border: 3px solid #140f0f;
       border-radius: 5px;
       cursor: pointer;
-      font-size: 12px;
+      font-size: 14px;
       color: #ff320d;
       text-shadow: 1px 1px 2px #140f0f;
       box-shadow: 3px 3px 0px #140f0f;
@@ -263,33 +263,17 @@
       document.getElementById('music-control').textContent = isMusicMuted ? 'Müzik: Kapalı' : 'Müzik: Açık';
     });
     
-    /* ========== CSV VERİSİNİ YÜKLE ================== */
+    /* ========== JSON VERİSİNİ YÜKLE ========== */
     let allQuestions = [];
-    
-    fetch('data.csv')
-      .then(response => response.text())
+    fetch('data.json')
+      .then(response => response.json())
       .then(data => {
-        allQuestions = parseCSV(data);
+        allQuestions = data;
+        console.log("Sorular yüklendi:", allQuestions);
       })
       .catch(error => {
-        console.error('CSV dosyası yüklenirken hata oluştu:', error);
+        console.error("JSON yüklenirken hata oluştu:", error);
       });
-    
-    // CSV dosyanızın ayraç karakteri tab (\t) veya virgül olabilir
-    function parseCSV(data) {
-      const delimiter = data.indexOf('\t') > -1 ? '\t' : ',';
-      const lines = data.trim().split('\n');
-      const headers = lines[0].split(delimiter).map(h => h.trim());
-      const rows = lines.slice(1);
-      return rows.map(line => {
-        const values = line.split(delimiter).map(v => v.trim());
-        let obj = {};
-        headers.forEach((header, index) => {
-          obj[header] = values[index];
-        });
-        return obj;
-      });
-    }
     
     /* ========== ANİMASYON (Çiçek Emojisi) ========== */
     function cycleIndicator() {
@@ -323,9 +307,9 @@
         return;
       }
       currentMode = mode;
-      // CSV'de 'Seviye' sütunu varsa filtrele, yoksa tüm veriyi kullan
-      if(allQuestions[0].hasOwnProperty('Seviye')){
-        currentQuestions = allQuestions.filter(q => q['Seviye'].toLowerCase() === mode);
+      // JSON'da "Seviye" sütunu varsa filtrele, yoksa tüm veriyi kullan
+      if (allQuestions[0].hasOwnProperty('Seviye')){
+        currentQuestions = allQuestions.filter(q => q.Seviye.toLowerCase() === mode);
       } else {
         currentQuestions = [...allQuestions];
       }
@@ -358,15 +342,15 @@
       }
       const q = currentQuestions[currentIndex];
       // Soru: "Korece '[Korece]' kelimesinin Türkçe karşılığı nedir?"
-      document.getElementById("question-text").textContent = `Korece "${q['Korece']}" kelimesinin Türkçe karşılığı nedir?`;
+      document.getElementById("question-text").textContent = `Korece "${q.Korece}" kelimesinin Türkçe karşılığı nedir?`;
       document.getElementById("feedback").textContent = "";
       document.getElementById("progress").textContent = `Soru: ${currentIndex + 1}/${currentQuestions.length}`;
     
       // Doğru cevap ve 3 rastgele yanlış cevap üretimi
-      const correctAnswer = q['Türkçe'];
+      const correctAnswer = q.Türkçe;
       let options = [correctAnswer];
       // Yanlış cevap havuzu: mevcut soruların 'Türkçe' değerleri, doğru cevap dışarıda
-      let pool = currentQuestions.map(item => item['Türkçe']).filter(ans => ans !== correctAnswer);
+      let pool = currentQuestions.map(item => item.Türkçe).filter(ans => ans !== correctAnswer);
       shuffleArray(pool);
       for (let i = 0; i < 3 && i < pool.length; i++) {
         options.push(pool[i]);
@@ -396,15 +380,15 @@
     /* ========== CEVAP KONTROLÜ ========== */
     function checkAnswer(selected) {
       const q = currentQuestions[currentIndex];
-      if (selected === q['Türkçe']) {
+      if (selected === q.Türkçe) {
         document.getElementById("feedback").textContent = "Doğru! 🎉";
         correctSound.currentTime = 0;
         correctSound.play().catch(() => {});
       } else {
-        document.getElementById("feedback").textContent = `Yanlış! Doğru cevap: ${q['Türkçe']}`;
+        document.getElementById("feedback").textContent = `Yanlış! Doğru cevap: ${q.Türkçe}`;
         wrongSound.currentTime = 0;
         wrongSound.play().catch(() => {});
-        wrongAnswers.add(`${q['Korece']} = ${q['Türkçe']}`);
+        wrongAnswers.add(`${q.Korece} = ${q.Türkçe}`);
         displayWrongAnswers();
       }
       document.getElementById("next-btn").style.display = "block";
