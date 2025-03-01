@@ -2,235 +2,259 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>Goçu Modu Quiz Örneği</title>
+  <title>Korece Kelime Oyunu</title>
   <style>
-    /* === GENEL SAYFA AYARLARI === */
     body {
       margin: 0; padding: 0;
-      background: #ffffff;
-      font-family: 'Comfortaa', sans-serif;
+      background: #fff;
+      font-family: "Comfortaa", sans-serif;
     }
-    /* Ana kapsayıcı */
-    .SoruGoU {
-      width: 1920px;  /* Figma'daki boyut */
-      height: 1080px; /* Figma'daki boyut */
-      position: relative;
-      background: white;
-      margin: 0 auto; /* Ortalamak istersen */
-      overflow: hidden; /* Taşmaları gizle */
+    h1, h2, h3, p, ul { margin: 0; padding: 0; }
+
+    /* Ekran kaplayan 3 ana bölüm: start-screen, quiz-screen, result-screen */
+    .screen {
+      display: none; /* başta hepsi kapalı */
+      width: 100vw;
+      height: 100vh;
+      overflow: auto;
+      text-align: center;
+      background: #fffaf0;
     }
-    /* Müzik butonu */
-    .Frame1 {
-      width: 70px;
-      height: 70px;
-      padding: 15px;
-      position: absolute;
+    .active {
+      display: block; /* aktif olanı göstereceğiz */
+    }
+
+    /* === START SCREEN STYLES === */
+    #start-screen {
+      padding-top: 50px;
+    }
+    #start-screen h1 {
+      color: #9FD520;
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+    .mode-btn {
+      font-size: 24px;
+      padding: 20px 40px;
+      margin: 20px;
+      border-radius: 10px;
+      border: 2px solid #FFC49A;
       background: #F7D9C4;
-      border-radius: 40px;
-      border: 1px #FFC49A solid;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 10px;
-      display: inline-flex;
       cursor: pointer;
     }
-    .Frame1:hover {
+    .mode-btn:hover {
       background: #ffd9b8;
     }
-    /* Seçenek metinlerinin ortak stili */
-    .SeEnek {
-      width: 249.93px; 
-      height: 31.34px; 
-      position: absolute; 
-      text-align: center; 
-      color: black; 
-      font-size: 32px; 
-      font-family: 'Comfortaa'; 
-      font-weight: 300; 
-      word-wrap: break-word;
-      cursor: pointer;  /* Tıklanabilir his vermek için */
+
+    /* === QUIZ SCREEN STYLES === */
+    #quiz-screen {
+      position: relative;
     }
-    .SeEnek:hover {
-      background-color: rgba(255, 196, 154, 0.4);
-      border-radius: 12px;
+    #top-bar {
+      display: flex;
+      justify-content: space-between;
+      padding: 20px 40px;
+      align-items: center;
     }
+    #music-btn {
+      width: 60px; height: 60px;
+      border-radius: 30px;
+      background: #F7D9C4;
+      border: 2px solid #FFC49A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    #music-btn:hover {
+      background: #ffd9b8;
+    }
+    #question-counter {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    #mode-switch-btn {
+      font-size: 18px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: 2px solid #FFC49A;
+      background: #F7D9C4;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    #mode-switch-btn:hover {
+      background: #ffd9b8;
+    }
+
+    #korean-word-box {
+      margin: 40px auto 20px auto;
+      width: 700px;
+      min-height: 150px;
+      background: rgba(247,217,196,0.3);
+      border: 2px dashed #FFC49A;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #korean-word {
+      font-size: 64px;
+      color: #9CD713;
+    }
+
+    #answer-buttons {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+    }
+    .answer-btn {
+      width: 200px;
+      padding: 15px;
+      border-radius: 20px;
+      border: 2px solid #FFC49A;
+      background: #F7D9C4;
+      font-size: 20px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .answer-btn:hover {
+      background: #ffd9b8;
+    }
+
+    #wrong-answers-box {
+      margin: 40px auto;
+      width: 60%;
+      min-height: 100px;
+      background: rgba(247,217,196,0.3);
+      border: 2px dashed #FFC49A;
+      border-radius: 20px;
+      padding: 20px;
+    }
+    #wrong-answers-box h3 {
+      margin-bottom: 10px;
+      font-size: 24px;
+      color: #d55;
+    }
+
+    /* === RESULT SCREEN STYLES === */
+    #result-screen {
+      padding-top: 50px;
+    }
+    #result-box {
+      width: 800px;
+      margin: 0 auto;
+      background: rgba(247,217,196,0.3);
+      border: 2px dashed #FFC49A;
+      border-radius: 20px;
+      padding: 20px;
+    }
+    #result-box h2 {
+      color: #9FD520;
+      margin-bottom: 20px;
+    }
+    .result-lists {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 30px;
+    }
+    .result-lists > div {
+      width: 40%;
+    }
+    .result-lists ul {
+      text-align: left;
+      list-style: none;
+      margin-top: 10px;
+    }
+    #score {
+      font-size: 28px;
+      margin: 20px 0;
+      color: #333;
+    }
+    #restart-btn {
+      font-size: 20px;
+      padding: 10px 30px;
+      border-radius: 10px;
+      border: 2px solid #FFC49A;
+      background: #F7D9C4;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    #restart-btn:hover {
+      background: #ffd9b8;
+    }
+
   </style>
 </head>
 <body>
 
-<!-- === GÖRSEL TASARIM (Figma'dan aldık) === -->
-<div data-layer="Soru Goçu" class="SoruGoU" id="quiz-container">
-
-  <!-- Soru kutusu + Sıra kutusu -->
-  <div data-layer="Group 13" class="Group13" 
-       style="width: 891px; height: 152px; left: 516px; top: 304px; position: absolute;">
-    
-    <div data-layer="Group 8" class="Group8" 
-         style="width: 891px; height: 152px; left: 0; top: 0; position: absolute;">
-      
-      <!-- Büyük svg (Soru çerçevesi) -->
-      <div data-svg-wrapper data-layer="Bg" class="Bg" 
-           style="left: 0; top: 0; position: absolute;">
-        <svg width="891" height="152" viewBox="0 0 891 152" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0 64.4C0 41.6204 0 30.2306 4.50346 21.561C8.29848 14.2553 14.2553 8.29848 21.561 4.50346C30.2306 0 41.6204 0 64.4 0H826.6C849.38 0 860.769 0 869.439 4.50346C876.745 8.29848 882.702 14.2553 886.497 21.561C891 30.2306 891 41.6204 891 64.4V76V87.6C891 110.38 891 121.769 886.497 130.439C882.702 137.745 876.745 143.702 869.439 147.497C860.769 152 849.38 152 826.6 152H64.4C41.6204 152 30.2306 152 21.561 147.497C14.2553 143.702 8.29848 137.745 4.50346 130.439C0 121.769 0 110.38 0 87.6V64.4Z" 
-                fill="#F7D9C4" fill-opacity="0.28"/>
-        </svg>
-      </div>
-      
-      <!-- Küçük svg (Sıra kutusu) -->
-      <div data-svg-wrapper data-layer="Bg" class="Bg" 
-           style="left: 0; top: 0; position: absolute;">
-        <svg width="143" height="152" viewBox="0 0 143 152" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0 64.4C0 41.6204 0 30.2306 4.50346 21.561C8.29848 14.2553 14.2553 8.29848 21.561 4.50346C30.2306 0 41.6204 0 64.4 0H78.6C101.38 0 112.769 0 121.439 4.50346C128.745 8.29848 134.702 14.2553 138.497 21.561C143 30.2306 143 41.6204 143 64.4V76V87.6C143 110.38 143 121.769 138.497 130.439C134.702 137.745 128.745 143.702 121.439 147.497C112.769 152 101.38 152 78.6 152H64.4C41.6204 152 30.2306 152 21.561 147.497C14.2553 143.702 8.29848 137.745 4.50346 130.439C0 121.769 0 110.38 0 87.6V64.4Z" 
-                fill="#F7D9C4" fill-opacity="0.28"/>
-        </svg>
-      </div>
-
-      <!-- Sıra yazısı (1/5 vb.) -->
-      <div data-layer="Sıra" class="SRa" id="question-number"
-           style="left: 32px; top: 53px; position: absolute; text-align: center; 
-                  color: black; font-size: 40px; font-weight: 300;">
-        0/0
-      </div>
-    </div>
-
-    <!-- Korece kelime (büyük soru metni) -->
-    <div data-layer="Korece" class="Korece" id="korean-word"
-         style="width: 719px; left: 76px; top: 31px; position: absolute; 
-                text-align: center; color: #9CD713; font-size: 96px; 
-                font-weight: 300;">
-      Korece
-    </div>
-  </div>
-  
-  <!-- 6 adet seçenek kutusu (Group15) -->
-  <div data-layer="Group 15" class="Group15" 
-       style="width: 891px; height: 164px; left: 517px; top: 510px; position: absolute;">
-
-    <!-- Her bir seçeneği "SeEnek" class'ıyla işaretliyoruz ki JS ile bulalım -->
-    
-    <!-- 1. seçenek -->
-    <div style="width: 288.06px; height: 52px; left: 2px; top: 0px; position: absolute;">
-      <div style="left: 0; top: 0; position: absolute;">
-        <svg width="289" height="52" viewBox="0 0 289 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M26 0.5H262.057C276.14 0.5 287.557 11.9167 287.557 26C287.557 40.0833 276.14 51.5 262.057 51.5H26C11.9168 51.5 0.5 40.0833 0.5 26C0.5 11.9167 11.9167 0.5 26 0.5Z" 
-                fill="#F7D9C4" stroke="#FFC49A"/>
-        </svg>
-      </div>
-      <div class="SeEnek" data-index="0"
-           style="left: 16.06px; top: 10.68px;">
-        Seçenek
-      </div>
-    </div>
-
-    <!-- 2. seçenek -->
-    <div style="width: 288.06px; height: 52px; left: 300.47px; top: 0px; position: absolute;">
-      <div style="left: 0; top: 0; position: absolute;">
-        <svg width="289" height="52" viewBox="0 0 289 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M26.4717 0.5H262.529C276.612 0.5 288.029 11.9167 288.029 26C288.029 40.0833 276.612 51.5 262.529 51.5H26.4717C12.3885 51.5 0.97168 40.0833 0.97168 26C0.97168 11.9167 12.3884 0.5 26.4717 0.5Z" 
-                fill="#F7D9C4" stroke="#FFC49A"/>
-        </svg>
-      </div>
-      <div class="SeEnek" data-index="1"
-           style="left: 19.06px; top: 10.68px;">
-        Seçenek
-      </div>
-    </div>
-
-    <!-- 3. seçenek -->
-    <div style="width: 288.06px; height: 52px; left: 601.94px; top: 0px; position: absolute;">
-      <div style="left: 0; top: 0; position: absolute;">
-        <svg width="289" height="52" viewBox="0 0 289 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M26.9429 0.5H263C277.083 0.5 288.5 11.9167 288.5 26C288.5 40.0833 277.083 51.5 263 51.5H26.9429C12.8596 51.5 1.44287 40.0833 1.44287 26C1.44287 11.9167 12.8596 0.5 26.9429 0.5Z" 
-                fill="#F7D9C4" stroke="#FFC49A"/>
-        </svg>
-      </div>
-      <div class="SeEnek" data-index="2"
-           style="left: 19.06px; top: 10.68px;">
-        Seçenek
-      </div>
-    </div>
-
-    <!-- 4. seçenek -->
-    <div style="width: 288.06px; height: 52px; left: 0px; top: 112px; position: absolute;">
-      <div style="left: 0; top: 0; position: absolute;">
-        <svg width="289" height="52" viewBox="0 0 289 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M26 0.5H262.057C276.14 0.5 287.557 11.9167 287.557 26C287.557 40.0833 276.14 51.5 262.057 51.5H26C11.9168 51.5 0.5 40.0833 0.5 26C0.5 11.9167 11.9167 0.5 26 0.5Z" 
-                fill="#F7D9C4" stroke="#FFC49A"/>
-        </svg>
-      </div>
-      <div class="SeEnek" data-index="3"
-           style="left: 19.06px; top: 10.68px;">
-        Seçenek
-      </div>
-    </div>
-
-    <!-- 5. seçenek -->
-    <div style="width: 288.06px; height: 52px; left: 301.47px; top: 112px; position: absolute;">
-      <div style="left: 0; top: 0; position: absolute;">
-        <svg width="289" height="52" viewBox="0 0 289 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M26.4717 0.5H262.529C276.612 0.5 288.029 11.9167 288.029 26C288.029 40.0833 276.612 51.5 262.529 51.5H26.4717C12.3885 51.5 0.97168 40.0833 0.97168 26C0.97168 11.9167 12.3884 0.5 26.4717 0.5Z" 
-                fill="#F7D9C4" stroke="#FFC49A"/>
-        </svg>
-      </div>
-      <div class="SeEnek" data-index="4"
-           style="left: 19.06px; top: 10.68px;">
-        Seçenek
-      </div>
-    </div>
-
-    <!-- 6. seçenek -->
-    <div style="width: 288.06px; height: 52px; left: 602.94px; top: 112px; position: absolute;">
-      <div style="left: 0; top: 0; position: absolute;">
-        <svg width="289" height="52" viewBox="0 0 289 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M26.9429 0.5H263C277.083 0.5 288.5 11.9167 288.5 26C288.5 40.0833 277.083 51.5 263 51.5H26.9429C12.8596 51.5 1.44287 40.0833 1.44287 26C1.44287 11.9167 12.8596 0.5 26.9429 0.5Z" 
-                fill="#F7D9C4" stroke="#FFC49A"/>
-        </svg>
-      </div>
-      <div class="SeEnek" data-index="5"
-           style="left: 19.06px; top: 10.68px;">
-        Seçenek
-      </div>
-    </div>
-  </div>
-
-  <!-- Alt taraftaki büyük kutu (şimdilik boş) -->
-  <div data-svg-wrapper data-layer="Bg" class="Bg" 
-       style="left: 514px; top: 741px; position: absolute;">
-    <svg width="891" height="262" viewBox="0 0 891 262" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M0 64.4C0 41.6204 0 30.2306 4.50346 21.561C8.29848 14.2553 14.2553 8.29848 21.561 4.50346C30.2306 0 41.6204 0 64.4 0H826.6C849.38 0 860.769 0 869.439 4.50346C876.745 8.29848 882.702 14.2553 886.497 21.561C891 30.2306 891 41.6204 891 64.4V131V197.6C891 220.38 891 231.769 886.497 240.439C882.702 247.745 876.745 253.702 869.439 257.497C860.769 262 849.38 262 826.6 262H64.4C41.6204 262 30.2306 262 21.561 257.497C14.2553 253.702 8.29848 247.745 4.50346 240.439C0 231.769 0 220.38 0 197.6V64.4Z" 
-            fill="#F7D9C4" fill-opacity="0.28"/>
-    </svg>
-  </div>
-
-  <!-- Müzik butonu (sağ üstte) -->
-  <div data-layer="Frame 1" class="Frame1" id="music-button"
-       style="left: 70px; top: 65px;">
-    <img data-layer="Music" class="Music" 
-         style="width: 39px; height: 40px;" 
-         src="https://placehold.co/39x40" alt="Music Icon" />
-  </div>
-
+<!-- ======== 1) MOD SEÇME EKRANI (START SCREEN) ======== -->
+<div id="start-screen" class="screen active">
+  <h1>KORECE KELİME OYUNU</h1>
+  <h2 style="color:#9CD713;">Mod Seç</h2>
+  <button id="kimbap-btn" class="mode-btn">🍙 Kimbap Modu (Kolay)</button>
+  <button id="gocu-btn" class="mode-btn">🌶️ Goçu Modu (Zor)</button>
 </div>
 
-<!-- === SES DOSYALARI === -->
+<!-- ======== 2) QUIZ EKRANI ======== -->
+<div id="quiz-screen" class="screen">
+  <div id="top-bar">
+    <!-- Müzik Aç/Kapa -->
+    <div id="music-btn">🔈</div>
+    <!-- Soru Sayacı -->
+    <div id="question-counter">1/20</div>
+  </div>
+
+  <!-- Mod değiştir butonu -->
+  <button id="mode-switch-btn">Kolay mı geldi? Biraz acı ekleyelim! 🌶️</button>
+
+  <!-- Soru Kutusu -->
+  <div id="korean-word-box">
+    <div id="korean-word">가게</div>
+  </div>
+
+  <!-- Şıklar -->
+  <div id="answer-buttons"></div>
+
+  <!-- Yanlış Cevaplar Kutusu -->
+  <div id="wrong-answers-box">
+    <h3>Yanlış Cevaplar</h3>
+    <ul id="wrong-list"></ul>
+  </div>
+</div>
+
+<!-- ======== 3) SONUÇ EKRANI ======== -->
+<div id="result-screen" class="screen">
+  <div id="result-box">
+    <h2>Quiz Sonucu</h2>
+    <div class="result-lists">
+      <div>
+        <h3>Doğru Yanıtlar</h3>
+        <ul id="correct-list"></ul>
+      </div>
+      <div>
+        <h3>Yanlış Yanıtlar</h3>
+        <ul id="incorrect-list"></ul>
+      </div>
+    </div>
+    <div id="score"></div>
+    <button id="restart-btn">Yeni Quiz Oluştur</button>
+  </div>
+</div>
+
+<!-- SES DOSYALARI -->
 <audio id="click-sound" src="click.mp3"></audio>
 <audio id="correct-sound" src="correct.mp3"></audio>
 <audio id="wrong-sound" src="wrong.mp3"></audio>
 <audio id="music-sound" src="music.mp3" loop></audio>
 
 <script>
-/* 
-  === BASİT QUIZ MANTIĞI ===
-  Aşağıdaki kod:
-    - 5 tane rastgele kelime seçer
-    - Her soruda Korece kelimeyi gösterir
-    - 6 seçenekten biri doğru, diğer 5 tanesi rastgele
-    - Tıklayınca doğru/yanlış kontrolü yapar
-    - Soru bittiğinde quiz biter
-    - Müzik aç/kapa butonu var
+/* === KELIME DIZISI ===
+   Elindeki 1000 kelimeyi buraya ekleyebilirsin.
 */
-
 const words = [
   { korean: "가격", turkish: "fiyat" },
   { korean: "가구", turkish: "mobilya" },
@@ -242,30 +266,64 @@ const words = [
   { korean: "가볍다", turkish: "hafif olmak" },
   { korean: "가수", turkish: "şarkıcı" },
   { korean: "가족", turkish: "aile" },
-  // istediğin kadar ekleyebilirsin...
+  { korean: "감기", turkish: "nezle" },
+  { korean: "감사하다", turkish: "teşekkür etmek" },
+  { korean: "갑자기", turkish: "aniden" },
+  { korean: "강", turkish: "nehir" },
+  { korean: "같다", turkish: "aynı olmak" },
+  { korean: "같이", turkish: "birlikte" },
+  { korean: "개", turkish: "köpek" },
+  { korean: "개", turkish: "adet" },
+  { korean: "개월", turkish: "ay" },
+  { korean: "거기", turkish: "orada" },
+  // Devam edebilirsin...
 ];
 
-// HTML elemanlarını alalım
-const koreanWordEl = document.getElementById("korean-word");
-const questionNumberEl = document.getElementById("question-number");
-const optionEls = document.querySelectorAll(".SeEnek");
-const musicBtn = document.getElementById("music-button");
+/* === DOM ELEMANLARI === */
+const startScreen = document.getElementById("start-screen");
+const quizScreen = document.getElementById("quiz-screen");
+const resultScreen = document.getElementById("result-screen");
 
-// Ses elementleri
+const kimbapBtn = document.getElementById("kimbap-btn");
+const gocuBtn = document.getElementById("gocu-btn");
+const modeSwitchBtn = document.getElementById("mode-switch-btn");
+
+const questionCounter = document.getElementById("question-counter");
+const koreanWordEl = document.getElementById("korean-word");
+const answerButtonsEl = document.getElementById("answer-buttons");
+const wrongList = document.getElementById("wrong-list");
+
+const correctList = document.getElementById("correct-list");
+const incorrectList = document.getElementById("incorrect-list");
+const scoreEl = document.getElementById("score");
+const restartBtn = document.getElementById("restart-btn");
+
+const musicBtn = document.getElementById("music-btn");
 const clickSound = document.getElementById("click-sound");
 const correctSound = document.getElementById("correct-sound");
 const wrongSound = document.getElementById("wrong-sound");
 const musicSound = document.getElementById("music-sound");
 
-let randomWords = []; // quiz için seçtiğimiz kelimeler
-let currentIndex = 0; // hangi sorudayız
-let correctIndex = 0; // doğru seçeneğin hangisi olduğunu tutar
+/* === DEĞİŞKENLER === */
+let mode = "kimbap"; // "kimbap" (kolay) veya "gocu" (zor)
+let randomWords = [];
+let currentQuestionIndex = 0;
+let wrongAnswers = []; // {korean, turkish} dizisi
+let answersGiven = []; // Tüm sorular: {korean, correctAnswer, userAnswer}
 let musicPlaying = false;
+let totalQuestions = 20; // Kaç soru çekilecek
 
-// Sayfa yüklenince quiz başlasın
-window.onload = startQuiz;
+/* === FONKSİYONLAR === */
 
-// Rastgele karıştırma fonksiyonu
+// Ekran göster/gizle
+function showScreen(screen) {
+  startScreen.classList.remove("active");
+  quizScreen.classList.remove("active");
+  resultScreen.classList.remove("active");
+  screen.classList.add("active");
+}
+
+// Rastgele karıştırma
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -274,64 +332,20 @@ function shuffle(array) {
   return array;
 }
 
-function startQuiz() {
-  // words dizisinden 5 tane rastgele alalım (istersen 20 yapabilirsin)
-  randomWords = shuffle([...words]).slice(0, 5);
-  currentIndex = 0;
-  showQuestion();
-}
-
-// Soruyu göster
-function showQuestion() {
-  if (currentIndex >= randomWords.length) {
-    alert("Quiz bitti! Tebrikler.");
-    return;
+// Müzik aç/kapa
+function toggleMusic() {
+  playClickSound();
+  if (musicPlaying) {
+    musicSound.pause();
+    musicBtn.textContent = "🔈";
+  } else {
+    musicSound.play();
+    musicBtn.textContent = "🔇";
   }
-  const questionObj = randomWords[currentIndex];
-  koreanWordEl.textContent = questionObj.korean;
-  questionNumberEl.textContent = (currentIndex+1) + "/" + randomWords.length;
-
-  // 6 seçenek oluştur. 1 tanesi doğru, 5 tanesi diğer kelimelerden rastgele
-  let answers = [questionObj.turkish];
-  // Diğer kelimelerden 5 tane alalım (yanlış)
-  let others = shuffle(words.filter(w => w.turkish !== questionObj.turkish))
-                .slice(0, 5)
-                .map(item => item.turkish);
-  answers.push(...others);
-  // 6'sını karıştıralım
-  shuffle(answers);
-  // Doğru cevabın index'ini bulalım
-  correctIndex = answers.indexOf(questionObj.turkish);
-
-  // Ekrana seçenekleri bas
-  optionEls.forEach((optEl, i) => {
-    optEl.textContent = answers[i];
-  });
+  musicPlaying = !musicPlaying;
 }
 
-// Seçeneğe tıklandığında
-optionEls.forEach(opt => {
-  opt.addEventListener("click", () => {
-    playClickSound();
-    const clickedIndex = parseInt(opt.getAttribute("data-index"));
-    if (clickedIndex === correctIndex) {
-      // doğru
-      playCorrectSound();
-    } else {
-      // yanlış
-      playWrongSound();
-    }
-    // Sonraki soruya geç
-    currentIndex++;
-    if (currentIndex < randomWords.length) {
-      showQuestion();
-    } else {
-      alert("Quiz bitti!");
-    }
-  });
-});
-
-// Ses oynatma fonksiyonları
+// Sesler
 function playClickSound() {
   clickSound.currentTime = 0;
   clickSound.play();
@@ -345,18 +359,52 @@ function playWrongSound() {
   wrongSound.play();
 }
 
-// Müzik aç/kapa
-musicBtn.addEventListener("click", () => {
-  playClickSound();
-  if (musicPlaying) {
-    musicSound.pause();
-    musicPlaying = false;
-  } else {
-    musicSound.play();
-    musicPlaying = true;
-  }
-});
-</script>
+// Quiz başlat
+function startQuiz(selectedMode) {
+  mode = selectedMode;
+  // Rastgele 20 kelime seç
+  randomWords = shuffle([...words]).slice(0, totalQuestions);
+  currentQuestionIndex = 0;
+  wrongAnswers = [];
+  answersGiven = [];
 
-</body>
-</html>
+  // Yanlış listeyi sıfırla
+  wrongList.innerHTML = "";
+
+  // Quiz ekranına geç
+  showScreen(quizScreen);
+
+  updateModeSwitchBtn();
+  showQuestion();
+}
+
+// Mod değiştir butonu yazısı
+function updateModeSwitchBtn() {
+  if (mode === "kimbap") {
+    modeSwitchBtn.textContent = "Kolay mı geldi? Biraz acı ekleyelim! 🌶️";
+  } else {
+    modeSwitchBtn.textContent = "Zor mu geldi? 🍙 Kimbap'a dönelim!";
+  }
+}
+
+// Soru göster
+function showQuestion() {
+  if (currentQuestionIndex >= randomWords.length) {
+    // Quiz bitti
+    endQuiz();
+    return;
+  }
+  const questionObj = randomWords[currentQuestionIndex];
+  koreanWordEl.textContent = questionObj.korean;
+  questionCounter.textContent = (currentQuestionIndex + 1) + "/" + totalQuestions;
+
+  // Seçenek sayısı mod'a göre
+  const choiceCount = (mode === "kimbap") ? 3 : 6;
+
+  // Doğru cevabı + rastgele diğer kelimeler
+  let answers = [questionObj.turkish];
+  let others = shuffle(words.filter(w => w.turkish !== questionObj.turkish))
+                .slice(0, choiceCount - 1)
+                .map(item => item.turkish);
+  answers.push(...others);
+  shuffl
