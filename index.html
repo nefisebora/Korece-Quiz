@@ -4,34 +4,42 @@
   <meta charset="UTF-8">
   <title>Korece Kelime Oyunu</title>
   <style>
+    /* Genel Ayarlar */
     body {
-      margin: 0; padding: 0;
+      margin: 0;
+      padding: 0;
       background: #fff;
       font-family: "Comfortaa", sans-serif;
     }
-    h1, h2, h3, p, ul { margin: 0; padding: 0; }
+    h1, h2, h3, p, ul {
+      margin: 0;
+      padding: 0;
+    }
 
-    /* Ekran kaplayan 3 ana bölüm: start-screen, quiz-screen, result-screen */
+    /* Üç ana ekran: Başlangıç, Quiz ve Sonuç */
     .screen {
-      display: none; /* başta hepsi kapalı */
+      display: none;
       width: 100vw;
       height: 100vh;
       overflow: auto;
       text-align: center;
       background: #fffaf0;
+      padding-top: 50px;
+      box-sizing: border-box;
     }
     .active {
-      display: block; /* aktif olanı göstereceğiz */
+      display: block;
     }
 
-    /* === START SCREEN STYLES === */
-    #start-screen {
-      padding-top: 50px;
-    }
+    /* --- Başlangıç Ekranı --- */
     #start-screen h1 {
       color: #9FD520;
       font-size: 48px;
       margin-bottom: 20px;
+    }
+    #start-screen h2 {
+      color: #9CD713;
+      margin-bottom: 30px;
     }
     .mode-btn {
       font-size: 24px;
@@ -41,31 +49,35 @@
       border: 2px solid #FFC49A;
       background: #F7D9C4;
       cursor: pointer;
+      transition: 0.2s;
     }
     .mode-btn:hover {
       background: #ffd9b8;
     }
 
-    /* === QUIZ SCREEN STYLES === */
+    /* --- Quiz Ekranı --- */
     #quiz-screen {
       position: relative;
+      padding-bottom: 50px;
     }
     #top-bar {
       display: flex;
       justify-content: space-between;
-      padding: 20px 40px;
       align-items: center;
+      padding: 20px 40px;
     }
     #music-btn {
-      width: 60px; height: 60px;
+      width: 60px;
+      height: 60px;
       border-radius: 30px;
       background: #F7D9C4;
       border: 2px solid #FFC49A;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 28px;
       cursor: pointer;
+      transition: 0.2s;
     }
     #music-btn:hover {
       background: #ffd9b8;
@@ -74,7 +86,6 @@
       font-size: 24px;
       font-weight: 600;
     }
-
     #mode-switch-btn {
       font-size: 18px;
       padding: 10px 20px;
@@ -82,12 +93,13 @@
       border: 2px solid #FFC49A;
       background: #F7D9C4;
       cursor: pointer;
-      margin-top: 10px;
+      margin: 10px auto;
+      display: block;
+      transition: 0.2s;
     }
     #mode-switch-btn:hover {
       background: #ffd9b8;
     }
-
     #korean-word-box {
       margin: 40px auto 20px auto;
       width: 700px;
@@ -103,7 +115,6 @@
       font-size: 64px;
       color: #9CD713;
     }
-
     #answer-buttons {
       margin-top: 20px;
       display: flex;
@@ -124,7 +135,6 @@
     .answer-btn:hover {
       background: #ffd9b8;
     }
-
     #wrong-answers-box {
       margin: 40px auto;
       width: 60%;
@@ -133,6 +143,7 @@
       border: 2px dashed #FFC49A;
       border-radius: 20px;
       padding: 20px;
+      text-align: left;
     }
     #wrong-answers-box h3 {
       margin-bottom: 10px;
@@ -140,7 +151,7 @@
       color: #d55;
     }
 
-    /* === RESULT SCREEN STYLES === */
+    /* --- Sonuç Ekranı --- */
     #result-screen {
       padding-top: 50px;
     }
@@ -182,229 +193,322 @@
       background: #F7D9C4;
       cursor: pointer;
       margin-top: 20px;
+      transition: 0.2s;
     }
     #restart-btn:hover {
       background: #ffd9b8;
     }
-
   </style>
 </head>
 <body>
 
-<!-- ======== 1) MOD SEÇME EKRANI (START SCREEN) ======== -->
-<div id="start-screen" class="screen active">
-  <h1>KORECE KELİME OYUNU</h1>
-  <h2 style="color:#9CD713;">Mod Seç</h2>
-  <button id="kimbap-btn" class="mode-btn">🍙 Kimbap Modu (Kolay)</button>
-  <button id="gocu-btn" class="mode-btn">🌶️ Goçu Modu (Zor)</button>
-</div>
-
-<!-- ======== 2) QUIZ EKRANI ======== -->
-<div id="quiz-screen" class="screen">
-  <div id="top-bar">
-    <!-- Müzik Aç/Kapa -->
-    <div id="music-btn">🔈</div>
-    <!-- Soru Sayacı -->
-    <div id="question-counter">1/20</div>
+  <!-- 1) MOD SEÇME EKRANI (START SCREEN) -->
+  <div id="start-screen" class="screen active">
+    <h1>KORECE KELİME OYUNU</h1>
+    <h2>Mod Seç</h2>
+    <button id="kimbap-btn" class="mode-btn">🍙 Kimbap Modu (Kolay)</button>
+    <button id="gocu-btn" class="mode-btn">🌶️ Goçu Modu (Zor)</button>
   </div>
 
-  <!-- Mod değiştir butonu -->
-  <button id="mode-switch-btn">Kolay mı geldi? Biraz acı ekleyelim! 🌶️</button>
-
-  <!-- Soru Kutusu -->
-  <div id="korean-word-box">
-    <div id="korean-word">가게</div>
-  </div>
-
-  <!-- Şıklar -->
-  <div id="answer-buttons"></div>
-
-  <!-- Yanlış Cevaplar Kutusu -->
-  <div id="wrong-answers-box">
-    <h3>Yanlış Cevaplar</h3>
-    <ul id="wrong-list"></ul>
-  </div>
-</div>
-
-<!-- ======== 3) SONUÇ EKRANI ======== -->
-<div id="result-screen" class="screen">
-  <div id="result-box">
-    <h2>Quiz Sonucu</h2>
-    <div class="result-lists">
-      <div>
-        <h3>Doğru Yanıtlar</h3>
-        <ul id="correct-list"></ul>
-      </div>
-      <div>
-        <h3>Yanlış Yanıtlar</h3>
-        <ul id="incorrect-list"></ul>
-      </div>
+  <!-- 2) QUIZ EKRANI -->
+  <div id="quiz-screen" class="screen">
+    <div id="top-bar">
+      <!-- Müzik Aç/Kapa -->
+      <div id="music-btn">🔈</div>
+      <!-- Soru Sayacı -->
+      <div id="question-counter">1/20</div>
     </div>
-    <div id="score"></div>
-    <button id="restart-btn">Yeni Quiz Oluştur</button>
+
+    <!-- Mod Değiştirme Butonu -->
+    <button id="mode-switch-btn">Kolay mı geldi? Biraz acı ekleyelim! 🌶️</button>
+
+    <!-- Soru Kutusu -->
+    <div id="korean-word-box">
+      <div id="korean-word">가게</div>
+    </div>
+
+    <!-- Şıklar -->
+    <div id="answer-buttons"></div>
+
+    <!-- Yanlış Cevaplar Kutusu -->
+    <div id="wrong-answers-box">
+      <h3>Yanlış Cevaplar</h3>
+      <ul id="wrong-list"></ul>
+    </div>
   </div>
-</div>
 
-<!-- SES DOSYALARI -->
-<audio id="click-sound" src="click.mp3"></audio>
-<audio id="correct-sound" src="correct.mp3"></audio>
-<audio id="wrong-sound" src="wrong.mp3"></audio>
-<audio id="music-sound" src="music.mp3" loop></audio>
+  <!-- 3) SONUÇ EKRANI -->
+  <div id="result-screen" class="screen">
+    <div id="result-box">
+      <h2>Quiz Sonucu</h2>
+      <div class="result-lists">
+        <div>
+          <h3>Doğru Yanıtlar</h3>
+          <ul id="correct-list"></ul>
+        </div>
+        <div>
+          <h3>Yanlış Yanıtlar</h3>
+          <ul id="incorrect-list"></ul>
+        </div>
+      </div>
+      <div id="score"></div>
+      <button id="restart-btn">Yeni Quiz Oluştur</button>
+    </div>
+  </div>
 
-<script>
-/* === KELIME DIZISI ===
-   Elindeki 1000 kelimeyi buraya ekleyebilirsin.
-*/
-const words = [
-  { korean: "가격", turkish: "fiyat" },
-  { korean: "가구", turkish: "mobilya" },
-  { korean: "가깝다", turkish: "yakın olmak" },
-  { korean: "가끔", turkish: "bazen" },
-  { korean: "가다", turkish: "gitmek" },
-  { korean: "가르치다", turkish: "öğretmek" },
-  { korean: "가방", turkish: "çanta" },
-  { korean: "가볍다", turkish: "hafif olmak" },
-  { korean: "가수", turkish: "şarkıcı" },
-  { korean: "가족", turkish: "aile" },
-  { korean: "감기", turkish: "nezle" },
-  { korean: "감사하다", turkish: "teşekkür etmek" },
-  { korean: "갑자기", turkish: "aniden" },
-  { korean: "강", turkish: "nehir" },
-  { korean: "같다", turkish: "aynı olmak" },
-  { korean: "같이", turkish: "birlikte" },
-  { korean: "개", turkish: "köpek" },
-  { korean: "개", turkish: "adet" },
-  { korean: "개월", turkish: "ay" },
-  { korean: "거기", turkish: "orada" },
-  // Devam edebilirsin...
-];
+  <!-- SES DOSYALARI (aynı klasörde bulunmalı) -->
+  <audio id="click-sound" src="click.mp3"></audio>
+  <audio id="correct-sound" src="correct.mp3"></audio>
+  <audio id="wrong-sound" src="wrong.mp3"></audio>
+  <audio id="music-sound" src="music.mp3" loop></audio>
 
-/* === DOM ELEMANLARI === */
-const startScreen = document.getElementById("start-screen");
-const quizScreen = document.getElementById("quiz-screen");
-const resultScreen = document.getElementById("result-screen");
+  <script>
+    /* --- KELIME DİZİSİ --- 
+       (Buraya elindeki 1000 kelimeyi ekleyebilirsin.)
+    */
+    const words = [
+      { korean: "가격", turkish: "fiyat" },
+      { korean: "가구", turkish: "mobilya" },
+      { korean: "가깝다", turkish: "yakın olmak" },
+      { korean: "가끔", turkish: "bazen" },
+      { korean: "가다", turkish: "gitmek" },
+      { korean: "가르치다", turkish: "öğretmek" },
+      { korean: "가방", turkish: "çanta" },
+      { korean: "가볍다", turkish: "hafif olmak" },
+      { korean: "가수", turkish: "şarkıcı" },
+      { korean: "가족", turkish: "aile" },
+      { korean: "감기", turkish: "nezle" },
+      { korean: "감사하다", turkish: "teşekkür etmek" },
+      { korean: "갑자기", turkish: "aniden" },
+      { korean: "강", turkish: "nehir" },
+      { korean: "같다", turkish: "aynı olmak" },
+      { korean: "같이", turkish: "birlikte" },
+      { korean: "개", turkish: "köpek" },
+      { korean: "개", turkish: "adet" },
+      { korean: "개월", turkish: "ay" },
+      { korean: "거기", turkish: "orada" }
+      // Devam edebilirsin...
+    ];
 
-const kimbapBtn = document.getElementById("kimbap-btn");
-const gocuBtn = document.getElementById("gocu-btn");
-const modeSwitchBtn = document.getElementById("mode-switch-btn");
+    /* --- DOM ELEMANLARI --- */
+    const startScreen = document.getElementById("start-screen");
+    const quizScreen = document.getElementById("quiz-screen");
+    const resultScreen = document.getElementById("result-screen");
 
-const questionCounter = document.getElementById("question-counter");
-const koreanWordEl = document.getElementById("korean-word");
-const answerButtonsEl = document.getElementById("answer-buttons");
-const wrongList = document.getElementById("wrong-list");
+    const kimbapBtn = document.getElementById("kimbap-btn");
+    const gocuBtn = document.getElementById("gocu-btn");
+    const modeSwitchBtn = document.getElementById("mode-switch-btn");
 
-const correctList = document.getElementById("correct-list");
-const incorrectList = document.getElementById("incorrect-list");
-const scoreEl = document.getElementById("score");
-const restartBtn = document.getElementById("restart-btn");
+    const questionCounter = document.getElementById("question-counter");
+    const koreanWordEl = document.getElementById("korean-word");
+    const answerButtonsEl = document.getElementById("answer-buttons");
+    const wrongList = document.getElementById("wrong-list");
 
-const musicBtn = document.getElementById("music-btn");
-const clickSound = document.getElementById("click-sound");
-const correctSound = document.getElementById("correct-sound");
-const wrongSound = document.getElementById("wrong-sound");
-const musicSound = document.getElementById("music-sound");
+    const correctList = document.getElementById("correct-list");
+    const incorrectList = document.getElementById("incorrect-list");
+    const scoreEl = document.getElementById("score");
+    const restartBtn = document.getElementById("restart-btn");
 
-/* === DEĞİŞKENLER === */
-let mode = "kimbap"; // "kimbap" (kolay) veya "gocu" (zor)
-let randomWords = [];
-let currentQuestionIndex = 0;
-let wrongAnswers = []; // {korean, turkish} dizisi
-let answersGiven = []; // Tüm sorular: {korean, correctAnswer, userAnswer}
-let musicPlaying = false;
-let totalQuestions = 20; // Kaç soru çekilecek
+    const musicBtn = document.getElementById("music-btn");
+    const clickSound = document.getElementById("click-sound");
+    const correctSound = document.getElementById("correct-sound");
+    const wrongSound = document.getElementById("wrong-sound");
+    const musicSound = document.getElementById("music-sound");
 
-/* === FONKSİYONLAR === */
+    /* --- DEĞİŞKENLER --- */
+    let mode = "kimbap"; // "kimbap" (kolay) veya "gocu" (zor)
+    let randomWords = [];
+    let currentQuestionIndex = 0;
+    let wrongAnswers = [];  // { korean, turkish }
+    let answersGiven = [];  // { korean, correctAnswer, userAnswer }
+    let musicPlaying = false;
+    let totalQuestions = 20; // Çekilecek soru sayısı
 
-// Ekran göster/gizle
-function showScreen(screen) {
-  startScreen.classList.remove("active");
-  quizScreen.classList.remove("active");
-  resultScreen.classList.remove("active");
-  screen.classList.add("active");
-}
+    /* --- FONKSİYONLAR --- */
+    // Ekranlar arasında geçiş yapar
+    function showScreen(screen) {
+      startScreen.classList.remove("active");
+      quizScreen.classList.remove("active");
+      resultScreen.classList.remove("active");
+      screen.classList.add("active");
+    }
 
-// Rastgele karıştırma
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
+    // Rastgele karıştırma
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
 
-// Müzik aç/kapa
-function toggleMusic() {
-  playClickSound();
-  if (musicPlaying) {
-    musicSound.pause();
-    musicBtn.textContent = "🔈";
-  } else {
-    musicSound.play();
-    musicBtn.textContent = "🔇";
-  }
-  musicPlaying = !musicPlaying;
-}
+    // Müzik aç/kapa
+    function toggleMusic() {
+      playClickSound();
+      if (musicPlaying) {
+        musicSound.pause();
+        musicBtn.textContent = "🔈";
+      } else {
+        musicSound.play();
+        musicBtn.textContent = "🔇";
+      }
+      musicPlaying = !musicPlaying;
+    }
 
-// Sesler
-function playClickSound() {
-  clickSound.currentTime = 0;
-  clickSound.play();
-}
-function playCorrectSound() {
-  correctSound.currentTime = 0;
-  correctSound.play();
-}
-function playWrongSound() {
-  wrongSound.currentTime = 0;
-  wrongSound.play();
-}
+    // Ses oynatma fonksiyonları
+    function playClickSound() {
+      clickSound.currentTime = 0;
+      clickSound.play();
+    }
+    function playCorrectSound() {
+      correctSound.currentTime = 0;
+      correctSound.play();
+    }
+    function playWrongSound() {
+      wrongSound.currentTime = 0;
+      wrongSound.play();
+    }
 
-// Quiz başlat
-function startQuiz(selectedMode) {
-  mode = selectedMode;
-  // Rastgele 20 kelime seç
-  randomWords = shuffle([...words]).slice(0, totalQuestions);
-  currentQuestionIndex = 0;
-  wrongAnswers = [];
-  answersGiven = [];
+    // Quiz başlatma (mod seçildiğinde)
+    function startQuiz(selectedMode) {
+      mode = selectedMode;
+      randomWords = shuffle([...words]).slice(0, totalQuestions);
+      currentQuestionIndex = 0;
+      wrongAnswers = [];
+      answersGiven = [];
+      wrongList.innerHTML = "";
+      showScreen(quizScreen);
+      updateModeSwitchBtn();
+      showQuestion();
+    }
 
-  // Yanlış listeyi sıfırla
-  wrongList.innerHTML = "";
+    // Mod değiştirme butonunun yazısını günceller
+    function updateModeSwitchBtn() {
+      if (mode === "kimbap") {
+        modeSwitchBtn.textContent = "Kolay mı geldi? Biraz acı ekleyelim! 🌶️";
+      } else {
+        modeSwitchBtn.textContent = "Zor mu geldi? 🍙 Kimbap'a dönelim!";
+      }
+    }
 
-  // Quiz ekranına geç
-  showScreen(quizScreen);
+    // Soru gösterme
+    function showQuestion() {
+      if (currentQuestionIndex >= randomWords.length) {
+        endQuiz();
+        return;
+      }
+      const questionObj = randomWords[currentQuestionIndex];
+      koreanWordEl.textContent = questionObj.korean;
+      questionCounter.textContent = (currentQuestionIndex + 1) + "/" + totalQuestions;
 
-  updateModeSwitchBtn();
-  showQuestion();
-}
+      // Mod'a göre seçenek sayısı
+      const choiceCount = (mode === "kimbap") ? 3 : 6;
+      let answers = [questionObj.turkish];
+      let others = shuffle(words.filter(w => w.turkish !== questionObj.turkish))
+                    .slice(0, choiceCount - 1)
+                    .map(item => item.turkish);
+      answers.push(...others);
+      shuffle(answers);
 
-// Mod değiştir butonu yazısı
-function updateModeSwitchBtn() {
-  if (mode === "kimbap") {
-    modeSwitchBtn.textContent = "Kolay mı geldi? Biraz acı ekleyelim! 🌶️";
-  } else {
-    modeSwitchBtn.textContent = "Zor mu geldi? 🍙 Kimbap'a dönelim!";
-  }
-}
+      // Seçenekleri ekrana bas
+      answerButtonsEl.innerHTML = "";
+      answers.forEach(ans => {
+        const btn = document.createElement("button");
+        btn.className = "answer-btn";
+        btn.textContent = ans;
+        btn.onclick = () => handleAnswerClick(ans);
+        answerButtonsEl.appendChild(btn);
+      });
+    }
 
-// Soru göster
-function showQuestion() {
-  if (currentQuestionIndex >= randomWords.length) {
-    // Quiz bitti
-    endQuiz();
-    return;
-  }
-  const questionObj = randomWords[currentQuestionIndex];
-  koreanWordEl.textContent = questionObj.korean;
-  questionCounter.textContent = (currentQuestionIndex + 1) + "/" + totalQuestions;
+    // Seçeneğe tıklandığında cevap kontrolü yapar
+    function handleAnswerClick(selectedAnswer) {
+      playClickSound();
+      const questionObj = randomWords[currentQuestionIndex];
+      const correctAnswer = questionObj.turkish;
 
-  // Seçenek sayısı mod'a göre
-  const choiceCount = (mode === "kimbap") ? 3 : 6;
+      answersGiven.push({
+        korean: questionObj.korean,
+        correctAnswer: correctAnswer,
+        userAnswer: selectedAnswer
+      });
 
-  // Doğru cevabı + rastgele diğer kelimeler
-  let answers = [questionObj.turkish];
-  let others = shuffle(words.filter(w => w.turkish !== questionObj.turkish))
-                .slice(0, choiceCount - 1)
-                .map(item => item.turkish);
-  answers.push(...others);
-  shuffl
+      if (selectedAnswer === correctAnswer) {
+        playCorrectSound();
+      } else {
+        playWrongSound();
+        // Yanlış cevap daha önce eklenmediyse listeye ekle
+        const alreadyWrong = wrongAnswers.some(w => w.korean === questionObj.korean);
+        if (!alreadyWrong) {
+          wrongAnswers.push({ korean: questionObj.korean, turkish: correctAnswer });
+          const li = document.createElement("li");
+          li.textContent = `${questionObj.korean} : ${correctAnswer}`;
+          wrongList.appendChild(li);
+        }
+      }
+      currentQuestionIndex++;
+      showQuestion();
+    }
+
+    // Mod değiştirme (aynı soruda sadece seçenek sayısı güncellenir)
+    function switchMode() {
+      playClickSound();
+      mode = (mode === "kimbap") ? "gocu" : "kimbap";
+      updateModeSwitchBtn();
+      showQuestion();
+    }
+
+    // Quiz bittiğinde sonuç ekranını gösterir
+    function endQuiz() {
+      let correctAnswersArr = [];
+      let incorrectAnswersArr = [];
+      answersGiven.forEach(item => {
+        if (item.correctAnswer === item.userAnswer) {
+          correctAnswersArr.push(item);
+        } else {
+          incorrectAnswersArr.push(item);
+        }
+      });
+      // Doğru yanıt listesini oluştur
+      correctList.innerHTML = "";
+      correctAnswersArr.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = `${item.korean} : ${item.correctAnswer}`;
+        correctList.appendChild(li);
+      });
+      // Yanlış yanıt listesini oluştur
+      incorrectList.innerHTML = "";
+      incorrectAnswersArr.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = `${item.korean} : Doğru: ${item.correctAnswer} / Sen: ${item.userAnswer}`;
+        incorrectList.appendChild(li);
+      });
+      // Puan hesapla (100 üzerinden)
+      const correctCount = correctAnswersArr.length;
+      const scoreValue = Math.round((correctCount / randomWords.length) * 100);
+      scoreEl.textContent = `Puanın: ${scoreValue} / 100`;
+
+      showScreen(resultScreen);
+    }
+
+    // Yeni quiz başlatmak için
+    function restartQuiz() {
+      playClickSound();
+      showScreen(startScreen);
+    }
+
+    /* --- EVENT LISTENERS --- */
+    kimbapBtn.addEventListener("click", () => {
+      playClickSound();
+      startQuiz("kimbap");
+    });
+    gocuBtn.addEventListener("click", () => {
+      playClickSound();
+      startQuiz("gocu");
+    });
+    modeSwitchBtn.addEventListener("click", switchMode);
+    musicBtn.addEventListener("click", toggleMusic);
+    restartBtn.addEventListener("click", restartQuiz);
+  </script>
+</body>
+</html>
